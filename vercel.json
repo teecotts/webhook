@@ -1,10 +1,5 @@
 {
     "version": 2,
     "buildCommand": "tsc",
-    "outputDirectory": "public",
-    "functions": {
-        "api/**/*.ts": {
-            "runtime": "vercel-node@latest"
-        }
-    }
+    "outputDirectory": "public"
 }
