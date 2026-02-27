@@ -26,3 +26,13 @@ Thumbs.db
 
 # Vercel
 .vercel/
+
+# TypeScript Build Artifacts
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
+!node_modules/**
+!package.json
+!tsconfig.json
+!vercel.json
