@@ -82,7 +82,9 @@ async function runTests() {
     console.log('\n--- Testing: Idempotency (Repeat Sent Event) ---');
     try {
         // Reuse the first payload from THIS run
-        const response = await axios.post(WEBHOOK_URL, testPayloads[0].payload, {
+        const firstPayload = testPayloads[0];
+        if (!firstPayload) throw new Error("No test payloads found");
+        const response = await axios.post(WEBHOOK_URL, firstPayload.payload, {
             headers: {
                 'x-instantly-signature': WEBHOOK_SECRET,
                 'Content-Type': 'application/json'

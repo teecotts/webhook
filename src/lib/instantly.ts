@@ -4,8 +4,8 @@ import {
     upsertGhlContact,
     upsertGhlOpportunity,
     upsertConversationOnReply,
-} from "../../src/lib/ghl";
-import { supabaseAdmin } from "../../src/lib/supabase_admin";
+} from "../../src/lib/ghl.js";
+import { supabase } from "../../src/lib/supabase.js";
 
 type InstantlyPayload = {
     id?: string; // provider event id (best)
@@ -40,7 +40,7 @@ function computeProviderEventId(payload: any) {
 }
 
 async function alreadyProcessed(providerEventId: string) {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
         .from("instantly_events")
         .select("id, status")
         .eq("provider_event_id", providerEventId)
@@ -58,7 +58,7 @@ async function logInstantlyEvent(params: {
     payload: any;
     status?: string;
 }) {
-    const { error } = await supabaseAdmin.from("instantly_events").insert({
+    const { error } = await supabase.from("instantly_events").insert({
         provider: "instantly",
         provider_event_id: params.provider_event_id,
         event_type: params.event_type,
@@ -73,7 +73,7 @@ async function logInstantlyEvent(params: {
 }
 
 async function markProcessed(providerEventId: string, extra?: any) {
-    const { error } = await supabaseAdmin
+    const { error } = await supabase
         .from("instantly_events")
         .update({
             status: "processed",
@@ -86,7 +86,7 @@ async function markProcessed(providerEventId: string, extra?: any) {
 }
 
 async function markFailed(providerEventId: string, errorObj: any) {
-    const { error } = await supabaseAdmin
+    const { error } = await supabase
         .from("instantly_events")
         .update({
             status: "failed",
@@ -99,7 +99,7 @@ async function markFailed(providerEventId: string, errorObj: any) {
 }
 
 async function deadLetter(source: string, providerEventId: string, payload: any, errorObj: any) {
-    const { error } = await supabaseAdmin.from("dead_letters").insert({
+    const { error } = await supabase.from("dead_letters").insert({
         source,
         provider: "instantly",
         provider_event_id: providerEventId,
@@ -170,7 +170,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             provider_event_id: providerEventId,
             event_type: eventType,
             email,
-            campaign_id: payload.campaign_id,
+            campaign_id: payload.campaign_id ?? undefined,
             payload,
             status: "received",
         });
